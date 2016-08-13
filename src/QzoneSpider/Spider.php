@@ -34,7 +34,7 @@ class Spider {
         }
         foreach ( $this->tasks as $task ) {
             $this->getPersionalInformation($task);
-            $this->getInterestInformation($task);
+            # $this->getInterestInformation($task);
         }
     }
     
@@ -55,6 +55,7 @@ class Spider {
             'uin'=>$account,
             'vuin'=>$this->account,
         );
+        $this->httpRequest->referer = 'http://ctc.qzs.qq.com/qzone/profile/index.html';
         $this->httpRequest->get('http://page.qq.com/cgi-bin/profile/interest_get');
         $result = $this->httpRequest->getJson();
         $catMap = explode(',', '喜欢,明星,音乐,影视,运动,游戏,数码,美食,旅游,书籍,其它');
@@ -145,7 +146,25 @@ class Spider {
         $checkCode = $matches[1][0];
         $verifyCode = $matches[1][1];
         if ( '0' !== $checkCode ) {
-            throw new \Exception('Verify code is required.');
+            $params = array(
+                'aid' => $appid,
+                'r' => '0.'.Util::randNumber(16),
+                'uin' => $this->account,
+                'vc_type'=>$verifyCode,
+            );
+            $content = $this->httpRequest->get('http://captcha.qq.com/getimage', $params);
+            file_put_contents(sprintf('%s/Data/VerifyCode/%s.jpg', dirname(__FILE__), $this->account), $content);
+            
+            $codeFile = sprintf('%s/Data/VerifyCode/%s.txt', dirname(__FILE__), $this->account);
+            file_put_contents($codeFile, '');
+            while ( true ) {
+                $verifyCode = file_get_contents($codeFile);
+                if ( !empty($verifyCode) ) {
+                    $verifyCode = 'hgjj'.$verifyCode;
+                    break;
+                }
+                sleep(1);
+            }
         }
         $salt = $matches[1][2];
         $ptVerifysessionV1 = $matches[1][3];

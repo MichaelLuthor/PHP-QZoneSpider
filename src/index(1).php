@@ -1,7 +1,7 @@
 <?php
 use MichaelLuthor\QzoneSpider\Spider;
 require 'QzoneSpider/Spider.php';
-$spider = new Spider('568109749', 'michael1215', array(
+$spider = new Spider('568109749', '', array(
     '975462080',
     '654302423',
     '260014426',

@@ -1,11 +1,13 @@
 <?php
 namespace MichaelLuthor\QzoneSpider\Library;
 class HTTPRequest {
-    private $userAgent='Mozilla/5.0 (Windows NT 6.2; WOW64; rv:21.0) Gecko/20100101 Firefox/21.0';
     private $cookieFilePath = null;
     private $cookieContent = false;
     private $pageContent = '';
     private $requestInfo = array();
+    public $host = null;
+    public $referer = null;
+    public $userAgent='Mozilla/5.0 (Windows NT 6.2; WOW64; rv:21.0) Gecko/20100101 Firefox/21.0';
     
     /**
      * @param unknown $path
@@ -89,6 +91,9 @@ class HTTPRequest {
         if ( null !== $this->cookieFilePath ) {
             $defaultOptions[CURLOPT_COOKIEJAR] = $this->cookieFilePath;
             $defaultOptions[CURLOPT_COOKIEFILE] = $this->cookieFilePath;
+        }
+        if ( null !== $this->referer ) {
+            $options[CURLOPT_REFERER] = $this->referer;
         }
         foreach ( $defaultOptions as $key => $value ) {
             if ( isset($options[$key]) ) {
